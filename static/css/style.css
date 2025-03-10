@@ -1,0 +1,261 @@
+/* ベーススタイル */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f8f9fa;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul {
+    list-style: none;
+}
+
+/* ヘッダーとナビゲーション */
+header {
+    background-color: #4a6fa5;
+    color: white;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo a {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+}
+
+.nav-links {
+    display: flex;
+}
+
+.nav-links li {
+    margin-left: 2rem;
+}
+
+.nav-links a {
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.nav-links a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* メインコンテンツ */
+main {
+    padding: 2rem;
+    min-height: calc(100vh - 130px);
+}
+
+/* ヒーローセクション */
+.hero {
+    background-color: #e9ecef;
+    border-radius: 8px;
+    padding: 3rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #123c69;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    color: #555;
+}
+
+/* ボタン */
+.btn-primary {
+    display: inline-block;
+    background-color: #4a6fa5;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #3a5a80;
+}
+
+.btn-secondary {
+    display: inline-block;
+    background-color: #6c757d;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* 特徴セクション */
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.feature-card {
+    background-color: white;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+
+.feature-card h2 {
+    margin-bottom: 1rem;
+    color: #123c69;
+}
+
+/* 始め方セクション */
+.getting-started {
+    background-color: white;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.getting-started h2 {
+    margin-bottom: 1rem;
+    color: #123c69;
+}
+
+.getting-started ol {
+    margin-left: 2rem;
+}
+
+.getting-started li {
+    margin-bottom: 0.5rem;
+}
+
+/* レッスン一覧ページ */
+.lessons-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.lessons-header h1 {
+    font-size: 2rem;
+    color: #123c69;
+    margin-bottom: 0.5rem;
+}
+
+.lessons-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.lesson-card {
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.5rem;
+}
+
+.lesson-card:hover {
+    transform: translateY(-5px);
+}
+
+.lesson-info {
+    margin-bottom: 1.5rem;
+}
+
+.lesson-info h2 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: #123c69;
+}
+
+.lesson-description {
+    color: #555;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.lesson-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.no-lessons {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* フッター */
+footer {
+    background-color: #f1f3f5;
+    color: #6c757d;
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.9rem;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+    }
+    
+    .nav-links {
+        margin-top: 1rem;
+    }
+    
+    .nav-links li {
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
+    
+    .hero {
+        padding: 2rem;
+    }
+    
+    .hero h1 {
+        font-size: 2rem;
+    }
+}

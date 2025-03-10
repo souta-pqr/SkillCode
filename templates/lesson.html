@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}レッスン一覧 - SkillCode{% endblock %}
+
+{% block content %}
+<section class="lessons-header">
+    <h1>Python レッスン一覧</h1>
+    <p>あなたのレベルに合わせたレッスンを選んで学習を始めましょう</p>
+</section>
+
+<section class="lessons-container">
+    {% if lessons %}
+        {% for lesson in lessons %}
+        <div class="lesson-card">
+            <div class="lesson-info">
+                <h2>{{ lesson.title }}</h2>
+                <p class="lesson-description">{{ lesson.description }}</p>
+                <div class="lesson-meta">
+                    <span class="difficulty">難易度: {{ lesson.difficulty }}</span>
+                    <span class="duration">所要時間: {{ lesson.duration }}分</span>
+                </div>
+            </div>
+            <a href="/lesson/{{ lesson.id }}" class="btn-secondary">レッスンを開始</a>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="no-lessons">
+            <p>現在、レッスンはありません。近日中に追加される予定です。</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

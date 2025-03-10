@@ -1,0 +1,4 @@
+flask==2.3.3
+supabase==1.0.3
+python-dotenv==1.0.0
+pytest==7.4.2

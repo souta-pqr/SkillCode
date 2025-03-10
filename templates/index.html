@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h1>プログラミングを一緒に学びましょう</h1>
+        <p>初心者から経験者まで、ステップバイステップでPythonを習得できます</p>
+        <a href="{{ url_for('lessons') }}" class="btn-primary">レッスンを始める</a>
+    </div>
+</section>
+
+<section class="features">
+    <div class="feature-card">
+        <h2>インタラクティブレッスン</h2>
+        <p>実際にコードを書きながら学ぶことができます</p>
+    </div>
+    <div class="feature-card">
+        <h2>プログラミングチャレンジ</h2>
+        <p>学んだ知識を実践的な問題で確認しましょう</p>
+    </div>
+    <div class="feature-card">
+        <h2>進捗トラッキング</h2>
+        <p>自分の学習の進み具合を確認できます</p>
+    </div>
+</section>
+
+<section class="getting-started">
+    <h2>始め方</h2>
+    <ol>
+        <li>アカウントを作成する</li>
+        <li>最初のレッスンを選ぶ</li>
+        <li>インタラクティブな学習を始める</li>
+        <li>チャレンジに挑戦する</li>
+    </ol>
+</section>
+{% endblock %}
