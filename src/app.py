@@ -94,3 +94,7 @@ def blank_editor():
     }
     
     return render_template("code_editor.html", exercise=default_exercise)
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
