@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}{{ lesson.title }} - SkillCode{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/highlight.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/markdown.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="lesson-container">
+    <div class="lesson-sidebar">
+        <div class="lesson-info">
+            <h1>{{ lesson.title }}</h1>
+            <div class="lesson-meta">
+                <span class="difficulty">難易度: {{ lesson.difficulty }}</span>
+                <span class="duration">所要時間: {{ lesson.duration }}分</span>
+            </div>
+            <p class="lesson-description">{{ lesson.description }}</p>
+        </div>
+        
+        <div class="lesson-navigation">
+            <div class="progress-bar">
+                <div class="progress-indicator" id="progress-indicator" style="width: 0%"></div>
+            </div>
+            
+            <div class="navigation-buttons">
+                {% if session.get('user_id') %}
+                    {% if progress and progress.completed %}
+                        <button class="btn-secondary" id="mark-complete" disabled>完了済み</button>
+                    {% else %}
+                        <button class="btn-primary" id="mark-complete">完了としてマーク</button>
+                    {% endif %}
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="btn-secondary">ログインして進捗を保存</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="lesson-content" id="lesson-content">
+        {{ lesson.content|markdown }}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/highlight.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // コードブロックのシンタックスハイライト
+        document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightBlock(block);
+        });
+        
+        // 進捗表示の初期化
+        const lessonContent = document.getElementById('lesson-content');
+        const progressIndicator = document.getElementById('progress-indicator');
+        const markComplete = document.getElementById('mark-complete');
+        const lessonId = '{{ lesson.id }}';
+        
+        // 保存された位置にスクロール
+        {% if progress and progress.last_position %}
+            window.scrollTo(0, {{ progress.last_position }});
+        {% endif %}
+        
+        // スクロール位置の追跡と保存
+        let scrollTimeout;
+        window.addEventListener('scroll', () => {
+            const scrollPosition = window.scrollY;
+            const contentHeight = lessonContent.offsetHeight;
+            const windowHeight = window.innerHeight;
+            const scrollHeight = document.documentElement.scrollHeight;
+            
+            // 進捗バーの更新
+            const scrollPercentage = (scrollPosition / (scrollHeight - windowHeight)) * 100;
+            progressIndicator.style.width = `${scrollPercentage}%`;
+            
+            // スクロール位置の保存（スロットリング）
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                {% if session.get('user_id') %}
+                    fetch(`/lesson/${lessonId}/update-progress`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ position: scrollPosition })
+                    });
+                {% endif %}
+            }, 1000);
+        });
+        
+        // 完了ボタンの処理
+        if (markComplete) {
+            markComplete.addEventListener('click', () => {
+                fetch(`/lesson/${lessonId}/complete`, {
+                    method: 'POST',
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        markComplete.textContent = '完了済み';
+                        markComplete.disabled = true;
+                        markComplete.classList.replace('btn-primary', 'btn-secondary');
+                    }
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}
