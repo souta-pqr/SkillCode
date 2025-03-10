@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}マイダッシュボード - SkillCode{% endblock %}
+
+{% block content %}
+<section class="dashboard-header">
+    <h1>こんにちは、{{ user.username }}さん</h1>
+    <p>あなたの学習進捗を確認しましょう</p>
+</section>
+
+<section class="dashboard-grid">
+    <div class="dashboard-card stats">
+        <h2>学習統計</h2>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <h3>完了したレッスン</h3>
+                <p class="stat-number">{{ progress|selectattr('completed', 'equalto', true)|list|length }}</p>
+            </div>
+            <div class="stat-item">
+                <h3>進行中のレッスン</h3>
+                <p class="stat-number">{{ progress|selectattr('completed', 'equalto', false)|list|length }}</p>
+            </div>
+            <div class="stat-item">
+                <h3>総学習時間</h3>
+                <p class="stat-number">{{ progress|selectattr('completed', 'equalto', true)|sum(attribute='lessons.duration') }} 分</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-card progress">
+        <h2>最近の進捗</h2>
+        {% if progress %}
+            <ul class="progress-list">
+                {% for item in progress %}
+                <li class="progress-item {% if item.completed %}completed{% endif %}">
+                    <div class="progress-info">
+                        <h3>{{ item.lessons.title }}</h3>
+                        <div class="progress-meta">
+                            {% if item.completed %}
+                                <span class="status completed">完了</span>
+                                <span class="date">{{ item.completed_at|datetime }}</span>
+                            {% else %}
+                                <span class="status in-progress">進行中</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <a href="/lesson/{{ item.lessons.id }}" class="btn-secondary">続ける</a>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="no-progress">
+                <p>まだ進捗がありません。最初のレッスンを始めましょう！</p>
+                <a href="{{ url_for('lessons') }}" class="btn-primary">レッスンを探す</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="dashboard-card recommended">
+        <h2>おすすめのレッスン</h2>
+        <div class="recommendation-grid">
+            <!-- サーバーサイドでユーザーの進捗に基づいておすすめのレッスンを取得 -->
+            <div class="recommendation-item">
+                <h3>データ構造入門</h3>
+                <p>リスト、辞書、セットなどPythonの基本的なデータ構造について学びます</p>
+                <a href="#" class="btn-secondary">詳細を見る</a>
+            </div>
+            <div class="recommendation-item">
+                <h3>ループと繰り返し</h3>
+                <p>forループとwhileループを使って繰り返し処理を行う方法を学びます</p>
+                <a href="#" class="btn-secondary">詳細を見る</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}アカウント作成 - SkillCode{% endblock %}
+
+{% block content %}
+<section class="auth-container">
+    <div class="auth-form">
+        <h1>アカウント作成</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <form method="POST" action="{{ url_for('signup') }}">
+            <div class="form-group">
+                <label for="username">ユーザー名</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">メールアドレス</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">パスワード</label>
+                <input type="password" id="password" name="password" required>
+                <small>8文字以上で、英数字と記号を含めてください</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirm_password">パスワード（確認）</label>
+                <input type="password" id="confirm_password" name="confirm_password" required>
+            </div>
+            
+            <button type="submit" class="btn-primary">アカウント作成</button>
+        </form>
+        
+        <div class="auth-links">
+            <p>すでにアカウントをお持ちですか？ <a href="{{ url_for('login') }}">ログイン</a></p>
+        </div>
+    </div>
+</section>
+{% endblock %}
