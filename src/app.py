@@ -1,8 +1,23 @@
+import os
 import subprocess
 import tempfile
-import os
-from flask import jsonify
+from flask import Flask, request, render_template, redirect, url_for, flash, jsonify, session
+from dotenv import load_dotenv
+from supabase import create_client, Client
 
+# 環境変数のロード
+load_dotenv()
+
+# Flaskアプリケーションの初期化 - この行が最初に必要です
+app = Flask(__name__)
+app.secret_key = os.environ.get("SECRET_KEY", "your-secret-key")
+
+# Supabaseクライアントの初期化
+supabase_url = os.environ.get("SUPABASE_URL")
+supabase_key = os.environ.get("SUPABASE_KEY")
+supabase: Client = create_client(supabase_url, supabase_key)
+
+# 以下にルートを定義
 @app.route("/api/execute-code", methods=["POST"])
 def execute_code():
     code = request.json.get("code", "")
@@ -94,6 +109,97 @@ def blank_editor():
     }
     
     return render_template("code_editor.html", exercise=default_exercise)
+
+# 追加のルート定義
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+@app.route("/lessons")
+def lessons():
+    # レッスン一覧をSupabaseから取得
+    lessons_data = supabase.table("lessons").select("*").execute()
+    return render_template("lesson.html", lessons=lessons_data.data)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    # ログイン処理を実装
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        
+        try:
+            response = supabase.auth.sign_in_with_password({"email": email, "password": password})
+            session['user_id'] = response.user.id
+            flash('ログインしました', 'success')
+            return redirect(url_for('dashboard'))
+        except Exception as e:
+            flash('ログインに失敗しました', 'error')
+    
+    return render_template('login.html')
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    # 新規ユーザー登録処理
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+        
+        if password != confirm_password:
+            flash('パスワードが一致しません', 'error')
+            return render_template('signup.html')
+        
+        try:
+            response = supabase.auth.sign_up({
+                "email": email,
+                "password": password,
+                "options": {
+                    "data": {
+                        "username": username
+                    }
+                }
+            })
+            flash('アカウントが作成されました。メールを確認してください。', 'success')
+            return redirect(url_for('login'))
+        except Exception as e:
+            flash('アカウント作成に失敗しました', 'error')
+    
+    return render_template('signup.html')
+
+@app.route('/dashboard')
+def dashboard():
+    # ユーザーのダッシュボード表示
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    # ユーザー情報取得
+    user_response = supabase.auth.get_user(session['user_id'])
+    user = user_response.user
+    
+    # ユーザーの進捗情報取得
+    progress = supabase.table("user_progress").select("*").eq("user_id", user.id).execute()
+    
+    return render_template('dashboard.html', user=user, progress=progress.data)
+
+# jinja2フィルターの設定
+@app.template_filter('markdown')
+def markdown_filter(text):
+    try:
+        import markdown
+        return markdown.markdown(text)
+    except ImportError:
+        return text
+    
+@app.template_filter('datetime')
+def datetime_filter(timestamp):
+    from datetime import datetime
+    try:
+        dt = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
+        return dt.strftime('%Y年%m月%d日 %H:%M')
+    except:
+        return timestamp
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
