@@ -8,8 +8,16 @@ from supabase import create_client, Client
 # 環境変数のロード
 load_dotenv()
 
-# Flaskアプリケーションの初期化 - この行が最初に必要です
-app = Flask(__name__)
+# プロジェクトのルートディレクトリへのパスを計算
+# src/app.py から見て、親ディレクトリ（プロジェクトルート）を指定
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+templates_dir = os.path.join(project_root, 'templates')
+static_dir = os.path.join(project_root, 'static')
+
+# Flaskアプリケーションの初期化 - テンプレートとスタティックフォルダを明示的に指定
+app = Flask(__name__, 
+            template_folder=templates_dir,
+            static_folder=static_dir)
 app.secret_key = os.environ.get("SECRET_KEY", "your-secret-key")
 
 # Supabaseクライアントの初期化
@@ -201,6 +209,19 @@ def datetime_filter(timestamp):
     except:
         return timestamp
 
+# デバッグ用のルート - テンプレート検索パスを確認
+@app.route('/debug')
+def debug():
+    return {
+        'template_folder': app.template_folder,
+        'static_folder': app.static_folder,
+        'templates_exist': os.path.exists(app.template_folder),
+        'static_exists': os.path.exists(app.static_folder),
+        'index_exists': os.path.exists(os.path.join(app.template_folder, 'index.html')),
+        'project_files': os.listdir(project_root)
+    }
+
+# Herokuで必要なポート設定
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
